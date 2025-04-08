@@ -1,11 +1,12 @@
 # Stage 1: Install dependencies and build the application
-FROM node:18-alpine3.16 AS builder
+FROM node:18-alpine3.19 AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Install OpenSSL 1.1 compatibility package needed by Prisma
-RUN apk add --no-cache libssl1.1
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.16/community" >> /etc/apk/repositories && \
+    apk add --no-cache libssl1.1
 
 # Install dependencies based on package-lock.json
 COPY package*.json ./
@@ -27,7 +28,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Create the final production image
-FROM node:18-alpine3.16
+FROM node:18-alpine3.19
 
 WORKDIR /app
 
@@ -46,7 +47,8 @@ COPY --from=builder /app/public ./public # Copy public folder if it exists
 COPY --from=builder /app/prisma ./prisma
 
 # Install OpenSSL 1.1 compatibility package needed by Prisma runtime
-RUN apk add --no-cache libssl1.1
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.16/community" >> /etc/apk/repositories && \
+    apk add --no-cache libssl1.1
 
 # Expose the port the app runs on
 EXPOSE 3000
