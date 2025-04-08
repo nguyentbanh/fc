@@ -4,8 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    # Environment variables can be added here if needed, e.g., for a different database
-    # environment:
-    #   DATABASE_URL: "file:/data/prod.db" # Already set in schema, but could override
+      - "3001:3000"
+    volumes:
+      - ./prisma/dev.db:/app/prisma/dev.db
+    environment:
+      DATABASE_URL: "file:./prisma/dev.db"
     restart: unless-stopped

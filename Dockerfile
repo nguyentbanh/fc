@@ -18,7 +18,7 @@ RUN npm ci
 COPY prisma ./prisma/
 
 # Initialize database
-RUN mkdir -p /data && \
+RUN mkdir -p ./prisma && \
     touch ./prisma/dev.db && \
     chmod 666 ./prisma/dev.db && \
     npx prisma generate && \
@@ -59,7 +59,6 @@ RUN if [ -d "/app/public" ]; then \
 
 # Copy Prisma schema and generated client for runtime use
 COPY --from=builder /app/prisma ./prisma
-RUN touch ./prisma/dev.db && chmod 666 ./prisma/dev.db
 
 # Expose the port the app runs on
 EXPOSE 3000
