@@ -19,8 +19,8 @@ COPY prisma ./prisma/
 
 # Initialize database
 RUN mkdir -p /data && \
-    touch /data/prod.db && \
-    chmod 666 /data/prod.db && \
+    touch ./prisma/dev.db && \
+    chmod 666 ./prisma/dev.db && \
     npx prisma generate && \
     npx prisma db push --accept-data-loss && \
     npx prisma migrate deploy
@@ -61,7 +61,7 @@ RUN if [ -d "/app/public" ]; then \
 
 # Copy Prisma schema and generated client for runtime use
 COPY --from=builder /app/prisma ./prisma
-RUN mkdir -p /data && touch /data/prod.db && chmod 666 /data/prod.db
+RUN touch ./prisma/dev.db && chmod 666 ./prisma/dev.db
 
 # Expose the port the app runs on
 EXPOSE 3000

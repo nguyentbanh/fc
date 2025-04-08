@@ -5,13 +5,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      # Mount a volume for the SQLite database persistence
-      - flashcard_data:/data 
     # Environment variables can be added here if needed, e.g., for a different database
     # environment:
     #   DATABASE_URL: "file:/data/prod.db" # Already set in schema, but could override
     restart: unless-stopped
-
-volumes:
-  flashcard_data: # Define the named volume for SQLite data
