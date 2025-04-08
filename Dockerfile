@@ -5,7 +5,7 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 # Install OpenSSL 1.1 compatibility package needed by Prisma
-RUN apk add --no-cache openssl1.1-compat
+RUN apk add --no-cache libssl1.1
 
 # Install dependencies based on package-lock.json
 COPY package*.json ./
@@ -46,7 +46,7 @@ COPY --from=builder /app/public ./public # Copy public folder if it exists
 COPY --from=builder /app/prisma ./prisma
 
 # Install OpenSSL 1.1 compatibility package needed by Prisma runtime
-RUN apk add --no-cache openssl1.1-compat
+RUN apk add --no-cache libssl1.1
 
 # Expose the port the app runs on
 EXPOSE 3000
