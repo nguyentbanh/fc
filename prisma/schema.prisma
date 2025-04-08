@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   // Use a path suitable for volume mounting in Docker
-  url      = "file:/data/prod.db" 
+  url      = "file:./dev.db"
 }
 
 model Deck {
