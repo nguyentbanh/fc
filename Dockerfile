@@ -1,11 +1,13 @@
 # Stage 1: Install dependencies and build the application
-FROM node:18-alpine3.19 AS builder
+FROM node:18-bullseye-slim AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Install OpenSSL compatibility package needed by Prisma
-RUN apk add --no-cache openssl=1.1.1w-r0
+# Install required system dependencies
+RUN apt-get update && \
+    apt-get install -y openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install dependencies based on package-lock.json
 COPY package*.json ./
@@ -27,7 +29,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Create the final production image
-FROM node:18-alpine3.19
+FROM node:18-bullseye-slim
 
 WORKDIR /app
 
@@ -35,6 +37,11 @@ WORKDIR /app
 ENV NODE_ENV production
 # Optionally set PORT, Next.js defaults to 3000
 # ENV PORT 3000
+
+# Install runtime dependencies
+RUN apt-get update && \
+    apt-get install -y openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy built assets from the builder stage
 COPY --from=builder /app/.next ./.next
@@ -44,9 +51,6 @@ COPY --from=builder /app/public ./public # Copy public folder if it exists
 
 # Copy Prisma schema and generated client for runtime use
 COPY --from=builder /app/prisma ./prisma
-
-# Install OpenSSL compatibility package needed by Prisma runtime
-RUN apk add --no-cache openssl=1.1.1w-r0
 
 # Expose the port the app runs on
 EXPOSE 3000
