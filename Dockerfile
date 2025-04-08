@@ -1,5 +1,5 @@
 # Stage 1: Install dependencies and build the application
-FROM node:18-alpine AS builder
+FROM node:18-alpine3.16 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -27,7 +27,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Create the final production image
-FROM node:18-alpine
+FROM node:18-alpine3.16
 
 WORKDIR /app
 
