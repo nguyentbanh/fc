@@ -14,13 +14,13 @@ COPY package*.json ./
 # Use npm ci for cleaner production installs
 RUN npm ci
 
-# Copy Prisma schema
+# Copy Prisma schema and database
 COPY prisma ./prisma/
+RUN mkdir -p /data && touch /data/prod.db && chmod 666 /data/prod.db
 
 # Generate Prisma Client
-# Ensure prisma is available, might need to install it globally in this stage if not devDependency
-# RUN npm install prisma --global # Optional: if prisma isn't in devDependencies
-RUN npx prisma generate
+RUN npx prisma generate && \
+    npx prisma migrate deploy
 
 # Copy the rest of the application code
 COPY . .
@@ -51,6 +51,7 @@ COPY --from=builder /app/public ./public # Copy public folder if it exists
 
 # Copy Prisma schema and generated client for runtime use
 COPY --from=builder /app/prisma ./prisma
+RUN mkdir -p /data && touch /data/prod.db && chmod 666 /data/prod.db
 
 # Expose the port the app runs on
 EXPOSE 3000
