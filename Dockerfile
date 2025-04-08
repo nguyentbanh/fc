@@ -14,12 +14,15 @@ COPY package*.json ./
 # Use npm ci for cleaner production installs
 RUN npm ci
 
-# Copy Prisma schema and database
+# Copy Prisma schema
 COPY prisma ./prisma/
-RUN mkdir -p /data && touch /data/prod.db && chmod 666 /data/prod.db
 
-# Generate Prisma Client
-RUN npx prisma generate && \
+# Initialize database
+RUN mkdir -p /data && \
+    touch /data/prod.db && \
+    chmod 666 /data/prod.db && \
+    npx prisma generate && \
+    npx prisma db push --accept-data-loss && \
     npx prisma migrate deploy
 
 # Copy the rest of the application code
