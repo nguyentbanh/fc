@@ -47,7 +47,8 @@ RUN apt-get update && \
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public # Copy public folder if it exists
+RUN mkdir -p ./public
+COPY --from=builder /app/public/. ./public/ || true # Silently skip if public folder doesn't exist
 
 # Copy Prisma schema and generated client for runtime use
 COPY --from=builder /app/prisma ./prisma
